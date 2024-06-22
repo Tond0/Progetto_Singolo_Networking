@@ -5,6 +5,9 @@ using Mirror;
 using UnityEngine.InputSystem;
 using Org.BouncyCastle.Asn1.Crmf;
 
+[RequireComponent(typeof(NetworkIdentity))]
+[RequireComponent(typeof(NetworkTransformReliable))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class Player : NetworkBehaviour
 {
     [Header("Components")]
@@ -50,7 +53,7 @@ public class Player : NetworkBehaviour
         Move(movement_direction);
     }
 
-    #region Server
+    #region Client
 
     [Command]
     private void Move(float direction)
