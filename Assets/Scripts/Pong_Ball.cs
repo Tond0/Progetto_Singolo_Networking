@@ -70,6 +70,7 @@ public class Pong_Ball : NetworkBehaviour
         float random_y = Random.Range(-.5f,.5f);
 
         randomDir = new(random_x,random_y);
+        randomDir.Normalize();
 
         rb.AddForce(randomDir * intialPush, ForceMode2D.Impulse);
     }
