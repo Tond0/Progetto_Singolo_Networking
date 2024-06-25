@@ -21,11 +21,13 @@ public class Pong_Ball : NetworkBehaviour
     private void OnEnable()
     {
         GameManager.OnRoundStarted += InitialKick;
+        GameManager.OnRoundEnded += ResetBall;
     }
 
     private void OnDisable()
     {
         GameManager.OnRoundStarted -= InitialKick;
+        GameManager.OnRoundEnded -= ResetBall;
     }
 
     [Server]
@@ -55,18 +57,17 @@ public class Pong_Ball : NetworkBehaviour
     [Server]
     private void ResetBall()
     {
+        rb.velocity = Vector2.zero;
         transform.position = spawn.position;
     }
 
     [Server]
     private void InitialKick()
     {
-        ResetBall();
-
         Vector2 randomDir;
 
         float random_x = Random.Range(-1f,1f);
-        float random_y = Random.Range(-.7f,.7f);
+        float random_y = Random.Range(-.5f,.5f);
 
         randomDir = new(random_x,random_y);
 

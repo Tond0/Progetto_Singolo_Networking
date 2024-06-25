@@ -13,6 +13,7 @@ public class Player : NetworkBehaviour
     [Header("Components")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private SpriteRenderer sprite_renderer;
+    
     [Header("Stats")]
     [SerializeField] private float movement_speed = .1f;
     private float movement_direction = 0;
