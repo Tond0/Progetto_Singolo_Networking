@@ -42,17 +42,17 @@ public class GameManager : NetworkBehaviour
 
     private void OnEnable()
     {
-        CustomNetworkManager.OnAllClientConnected += StartGame;
+        CustomNetworkManager.OnAllPlayersReady += StartGame;
         
-        CustomNetworkManager.OnPlayerConnected += AddPlayerToScoreboard;
+        CustomNetworkManager.OnPlayerReady += AddPlayerToScoreboard;
 
         Goal.OnGoal += UpdateScore;
     }
 
     private void OnDisable()
     {
-        CustomNetworkManager.OnAllClientConnected -= StartGame;
-        CustomNetworkManager.OnPlayerConnected -= AddPlayerToScoreboard;
+        CustomNetworkManager.OnAllPlayersReady -= StartGame;
+        CustomNetworkManager.OnPlayerReady -= AddPlayerToScoreboard;
         Goal.OnGoal -= UpdateScore;
     }
 
@@ -82,21 +82,31 @@ public class GameManager : NetworkBehaviour
     
     public void UpdateScore(NetworkConnectionToClient conn)
     {
+        OnRoundEnded?.Invoke();
+
         if(!scoreboard.TryGetValue(conn, out int score)) return;
 
         score += 1;
         scoreboard[conn] = score;
 
-        bool is_P1 = conn.connectionId == 0 ? true : false;
-        OnScoreUpdate?.Invoke(is_P1, score);
+        bool is_P1 = conn.connectionId == 0;
+        RpcScoreUpdate(is_P1, score);
 
         //Ha vinto?
-        if (score < points_to_win) return;
+        if (score < points_to_win)
+        {
+            //FIXME: Per ora lo metto qua
+            OnRoundStarted?.Invoke();
+            return;
+        }
 
         RpcMatchOver(is_P1);
     }
 
-    //Call match over on all clients
+    
     [ClientRpc]
-    private void RpcMatchOver(bool is_P1) => OnMatchOver?.Invoke(is_P1); 
+    private void RpcMatchOver(bool is_P1) => OnMatchOver?.Invoke(is_P1);
+
+    [ClientRpc]
+    private void RpcScoreUpdate(bool is_P1, int scire) => OnScoreUpdate?.Invoke(is_P1, scire);
 }

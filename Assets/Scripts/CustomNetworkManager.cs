@@ -6,22 +6,14 @@ using UnityEngine;
 
 public class CustomNetworkManager : NetworkManager
 {
-    public static Action OnAllClientConnected;
-    public static Action<NetworkConnectionToClient> OnPlayerConnected;
+    public static Action OnAllPlayersReady;
+    public static Action<NetworkConnectionToClient> OnPlayerReady;
 
     [Space(5)]
     [Header("Goals")]
     [SerializeField] private GameObject prefab_goal;
     [SerializeField, Tooltip("Dove spawna la porta che dovrà difendere P1?")] private Transform spawn_P1_Goal;
     [SerializeField, Tooltip("Dove spawna la porta che dovrà difendere P2?")] private Transform spawn_P2_Goal;
-
-    public override void OnClientConnect()
-    {
-        if(NetworkServer.connections.Count == 2)
-            OnAllClientConnected?.Invoke();
-
-        base.OnClientConnect();
-    }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
@@ -44,10 +36,13 @@ public class CustomNetworkManager : NetworkManager
                 break;
         }
 
-
         GameObject goal = Instantiate(prefab_goal, pos, prefab_goal.transform.rotation);
         NetworkServer.Spawn(goal, conn);
 
-        OnPlayerConnected?.Invoke(conn);
+        OnPlayerReady?.Invoke(conn);
+
+        //FIXME: un modo migliore? siccome già me lo chiedo sopra così che non debba chiederlo due volte?
+        if(numPlayers == 2)
+            OnAllPlayersReady?.Invoke();
     }
 }

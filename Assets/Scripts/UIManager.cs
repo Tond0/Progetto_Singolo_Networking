@@ -7,8 +7,8 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(NetworkIdentity))]
-public class UIManager : NetworkBehaviour
+
+public class UIManager : MonoBehaviour
 {
     [Header("Views")]
     [SerializeField] private View view_Game;
@@ -37,7 +37,7 @@ public class UIManager : NetworkBehaviour
         currentView = view_Game;
     }
 
-    [ClientRpc]
+
     private void UpdateScore(bool P1_Scored, int new_score)
     {
         LayoutGroup score_to_update = P1_Scored ? Score_P1 : Score_P2;

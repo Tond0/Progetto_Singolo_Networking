@@ -25,8 +25,5 @@ public class Goal : NetworkBehaviour
 
         //Diciamo che è stato fatto goal e passiamo chi la subito.
         OnGoal?.Invoke(connectionToClient);
-
-        GameManager.OnRoundEnded?.Invoke();
-        GameManager.OnRoundStarted?.Invoke();
     }
 }
