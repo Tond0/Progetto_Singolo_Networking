@@ -10,7 +10,9 @@ public class GameManager : NetworkBehaviour
     public static Action OnRoundStarted;
     public static Action OnRoundEnded;
 
-    public static Action<NetworkConnectionToClient> OnMatchOver;
+    //FIXME: magari fargli dare dei nomi invece di fare p1 o p2?
+    //Bool sta per Is_P1?
+    public static Action<bool> OnMatchOver;
     
     public static Action<bool, int> OnScoreUpdate;
 
@@ -18,7 +20,7 @@ public class GameManager : NetworkBehaviour
     [Header("Match Settings")]
 
     #region Score Variables
-    [SerializeField, Tooltip("How many points to win a match?")] private int points_to_win;
+    [SerializeField, Tooltip("How many points to win a match?")] private int points_to_win = 3;
 
     private Dictionary<NetworkConnectionToClient, int> scoreboard = new();
 
@@ -76,7 +78,8 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// Update the current score
     /// </summary>
-    /// <param name="p1_scored">Il player che ha SUBITO il goal</param>
+    /// <param "name="p1_scored">Il player che ha fatto goal</param>
+    
     public void UpdateScore(NetworkConnectionToClient conn)
     {
         if(!scoreboard.TryGetValue(conn, out int score)) return;
@@ -89,6 +92,10 @@ public class GameManager : NetworkBehaviour
         //Ha vinto?
         if (score < points_to_win) return;
 
-        OnMatchOver?.Invoke(conn);
+        RpcMatchOver(is_P1);
     }
+
+    //Call match over on all clients
+    [ClientRpc]
+    private void RpcMatchOver(bool is_P1) => OnMatchOver?.Invoke(is_P1); 
 }

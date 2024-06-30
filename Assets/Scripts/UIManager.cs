@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SocialPlatforms.Impl;
@@ -7,6 +8,11 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Views")]
+    [SerializeField] private View view_Game;
+    [SerializeField] private View view_MatchOver;
+
+    private View currentView;
     [Header("Score")]
     [SerializeField] private LayoutGroup Score_P1;
     [SerializeField] private LayoutGroup Score_P2;
@@ -14,11 +20,19 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         GameManager.OnScoreUpdate += UpdateScore;
+        GameManager.OnMatchOver += OnMatchOver;
     }
 
     private void OnDisable()
     {
         GameManager.OnScoreUpdate -= UpdateScore;
+        GameManager.OnMatchOver -= OnMatchOver;
+    }
+
+    private void Start()
+    {
+        //FIXME: per ora qua
+        currentView = view_Game;
     }
 
     private void UpdateScore(bool P1_Scored, int new_score)
@@ -30,5 +44,26 @@ public class UIManager : MonoBehaviour
         Debug.Log(new_score);
 
         ui_point.Fill.fillAmount = 1;
+    }
+
+    private void OnMatchOver(bool Is_P1)
+    {
+        SwitchView(view_MatchOver);
+
+        TextMeshProUGUI TMP_winnerText = view_MatchOver.GetComponentInChildren<TextMeshProUGUI>();
+
+        string winner = Is_P1 ? "Player 1" : "Player 2";
+
+        TMP_winnerText.text = winner + " won!";
+    }
+
+    //FIXME:Publi?
+    private void SwitchView(View newView)
+    {
+        currentView.gameObject.SetActive(false);
+
+        currentView = newView;
+
+        currentView.gameObject.SetActive(true);
     }
 }
