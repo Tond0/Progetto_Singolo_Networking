@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,7 +7,8 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+[RequireComponent(typeof(NetworkIdentity))]
+public class UIManager : NetworkBehaviour
 {
     [Header("Views")]
     [SerializeField] private View view_Game;
@@ -35,13 +37,12 @@ public class UIManager : MonoBehaviour
         currentView = view_Game;
     }
 
+    [ClientRpc]
     private void UpdateScore(bool P1_Scored, int new_score)
     {
         LayoutGroup score_to_update = P1_Scored ? Score_P1 : Score_P2;
 
         if (!score_to_update.transform.GetChild(new_score - 1).TryGetComponent<UI_Point>(out UI_Point ui_point)) return;
-
-        Debug.Log(new_score);
 
         ui_point.Fill.fillAmount = 1;
     }

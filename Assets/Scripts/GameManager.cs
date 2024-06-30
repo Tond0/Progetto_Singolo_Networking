@@ -85,8 +85,9 @@ public class GameManager : NetworkBehaviour
         if(!scoreboard.TryGetValue(conn, out int score)) return;
 
         score += 1;
+        scoreboard[conn] = score;
 
-        bool is_P1 = conn.identity.isServer;
+        bool is_P1 = conn.connectionId == 0 ? true : false;
         OnScoreUpdate?.Invoke(is_P1, score);
 
         //Ha vinto?
