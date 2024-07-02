@@ -47,18 +47,48 @@ public class UIManager : MonoBehaviour
         ui_point.Fill.fillAmount = 1;
     }
 
-    private void OnMatchOver(bool Is_P1)
+    private void OnMatchOver(bool is_Winner, int difference_Score)
     {
+        //Switch to GameOver view
         SwitchView(view_MatchOver);
 
+        //Get text component
         TextMeshProUGUI TMP_winnerText = view_MatchOver.GetComponentInChildren<TextMeshProUGUI>();
 
-        string winner = Is_P1 ? "Player 1" : "Player 2";
+        //Get the text to display at the end of the game for each client
+        string matchOver_text = GetMatchOverText(is_Winner, difference_Score);
 
-        TMP_winnerText.text = winner + " won!";
+        //Display the text!
+        TMP_winnerText.text = matchOver_text;
     }
 
-    //FIXME:Publi?
+    private string GetMatchOverText(bool isThisClientWinner, int score_Difference)
+    {
+        //Are u the winner?
+        if(isThisClientWinner)
+        {
+            //Che figata non avevo idea che uno switch potesse essere scitto in questo modo
+            return score_Difference switch
+            {
+                1 => "Hard-fought Win",
+                2 => "Deserved Win",
+                3 => "Domination Win",
+                _ => string.Empty,
+            };
+        }
+        else
+        {
+            return score_Difference switch
+            {
+                1 => "Heartbreaking Defeat",
+                2 => "Deserved Defeat",
+                3 => "Total Defeat",
+                _ => string.Empty,
+            };
+        }
+    }
+
+    //FIXME:Public?
     private void SwitchView(View newView)
     {
         currentView.gameObject.SetActive(false);

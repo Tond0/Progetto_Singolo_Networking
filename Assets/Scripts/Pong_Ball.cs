@@ -66,12 +66,14 @@ public class Pong_Ball : NetworkBehaviour
     {
         Vector2 randomDir;
 
-        float random_x = Random.Range(-1f,1f);
-        float random_y = Random.Range(-.5f,.5f);
+        float random_x = Random.Range(-1f, 1f);
+        float random_y = Random.Range(-.4f, .4f);
 
-        randomDir = new(random_x,random_y);
+        randomDir = new(random_x, random_y);
         randomDir.Normalize();
 
-        rb.AddForce(randomDir * intialPush, ForceMode2D.Impulse);
+        Vector2 push = randomDir * intialPush;
+
+        rb.AddForce(push, ForceMode2D.Impulse);
     }
 }

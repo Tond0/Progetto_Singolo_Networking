@@ -18,12 +18,14 @@ public class Goal : NetworkBehaviour
         base.OnStartAuthority();
     }
 
-    [Server]
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (!collision.transform.TryGetComponent<Pong_Ball>(out Pong_Ball ball)) return;
 
-        //Diciamo che è stato fatto goal e passiamo chi la subito.
-        OnGoal?.Invoke(connectionToClient);
+        if (isServer)
+        {
+            //Diciamo che è stato fatto goal e passiamo chi l'ha subito.
+            OnGoal?.Invoke(connectionToClient);
+        }
     }
 }

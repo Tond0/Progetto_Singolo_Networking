@@ -2127,7 +2127,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  points_to_win: 3
+  points_To_Win: 3
   startRound: 0
 --- !u!114 &2049822386
 MonoBehaviour:
