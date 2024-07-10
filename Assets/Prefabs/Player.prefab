@@ -138,7 +138,7 @@ MonoBehaviour:
   syncInterval: 0
   rb: {fileID: -6787713727255621802}
   sprite_renderer: {fileID: 1057561139147124733}
-  movement_speed: 20
+  movement_speed: 30
 --- !u!114 &1057561140227965480
 MonoBehaviour:
   m_ObjectHideFlags: 0

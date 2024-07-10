@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.InputSystem;
 using Org.BouncyCastle.Asn1.Crmf;
+using System;
 
 [RequireComponent(typeof(NetworkIdentity))]
 [RequireComponent(typeof(NetworkTransformReliable))]
@@ -17,6 +18,10 @@ public class Player : NetworkBehaviour
     [Header("Stats")]
     [SerializeField] private float movement_speed = .1f;
     private float movement_direction = 0;
+
+    #region Events
+
+    #endregion
 
 
     #region Input

@@ -20,7 +20,7 @@ public class Goal : NetworkBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!collision.transform.TryGetComponent<Pong_Ball>(out Pong_Ball ball)) return;
+        if (!collision.transform.TryGetComponent<Ball>(out Ball ball)) return;
 
         if (isServer)
         {

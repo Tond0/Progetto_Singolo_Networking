@@ -6,12 +6,12 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkIdentity))]
 [RequireComponent(typeof(NetworkTransformReliable))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class Pong_Ball : NetworkBehaviour
+public class Ball : NetworkBehaviour
 {
     [Header("Components")]
     [SerializeField] private Rigidbody2D rb;
     [Header("Settings")]
-    [SerializeField, Tooltip("How MORE fast does it get each time a player touch it?")] private float speed_multi;
+    [SerializeField, Tooltip("How MORE fast does it get each time a player touch it?")] private float speed_boost = 5;
     [SerializeField, Tooltip("The first push force multiplaier")] private float intialPush;
     
     private float min_max_speed = 10;
@@ -75,5 +75,14 @@ public class Pong_Ball : NetworkBehaviour
         Vector2 push = randomDir * intialPush;
 
         rb.AddForce(push, ForceMode2D.Impulse);
+    }
+
+    [Server]
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!collision.transform.TryGetComponent<Player>(out Player collided_player)) return;
+
+        min_max_speed += speed_boost;
     }
 }

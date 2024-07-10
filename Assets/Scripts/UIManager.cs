@@ -11,6 +11,12 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [Header("Views")]
+    [SerializeField, Tooltip("The first view active")] private View view_First;
+    [Space(13)]
+    [SerializeField] private View view_HostOrJoin;
+    [SerializeField] private View view_Lobby;
+    [SerializeField] private View view_JoinGame;
+    [Space(5)]
     [SerializeField] private View view_Game;
     [SerializeField] private View view_MatchOver;
 
@@ -21,12 +27,16 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
+        CustomNetworkManager.OnClientConnected += Handle_ClientConnected;
+
         GameManager.OnScoreUpdate += UpdateScore;
         GameManager.OnMatchOver += OnMatchOver;
     }
 
     private void OnDisable()
     {
+        CustomNetworkManager.OnClientConnected -= Handle_ClientConnected;
+
         GameManager.OnScoreUpdate -= UpdateScore;
         GameManager.OnMatchOver -= OnMatchOver;
     }
@@ -34,10 +44,11 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         //FIXME: per ora qua
-        currentView = view_Game;
+        currentView = view_First;
     }
 
 
+    //FIXME:Spostare queste cose nella view???
     private void UpdateScore(bool P1_Scored, int new_score)
     {
         LayoutGroup score_to_update = P1_Scored ? Score_P1 : Score_P2;
@@ -46,11 +57,10 @@ public class UIManager : MonoBehaviour
 
         ui_point.Fill.fillAmount = 1;
     }
-
     private void OnMatchOver(bool is_Winner, int difference_Score)
     {
         //Switch to GameOver view
-        SwitchView(view_MatchOver);
+        SwitchView(view_MatchOver, false);
 
         //Get text component
         TextMeshProUGUI TMP_winnerText = view_MatchOver.GetComponentInChildren<TextMeshProUGUI>();
@@ -61,7 +71,6 @@ public class UIManager : MonoBehaviour
         //Display the text!
         TMP_winnerText.text = matchOver_text;
     }
-
     private string GetMatchOverText(bool isThisClientWinner, int score_Difference)
     {
         //Are u the winner?
@@ -88,13 +97,29 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    //FIXME:Public?
-    private void SwitchView(View newView)
+    #region Lobby
+    private void Handle_ClientConnected()
     {
-        currentView.gameObject.SetActive(false);
+        View_Lobby view = (View_Lobby)view_Lobby;
+
+        if (NetworkManager.singleton.numPlayers <= 1)
+            view.UpdateLobby("Player 1", null);
+        else
+            view.UpdateLobby("Player 1", "Player 2");
+    }
+    #endregion
+
+    #region View System
+    public void ChangeView(View newView) => SwitchView(newView, false);
+    public void AddView(View newView) => SwitchView(newView, true);
+    private void SwitchView(View newView, bool additive)
+    {
+        if(!additive)
+            currentView.gameObject.SetActive(false);
 
         currentView = newView;
 
         currentView.gameObject.SetActive(true);
     }
+    #endregion
 }
